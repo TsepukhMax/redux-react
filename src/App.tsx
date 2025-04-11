@@ -1,20 +1,10 @@
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-import { DecrementAction, IncrementAction, store } from './store'
+import { CounterId, DecrementAction, IncrementAction, store } from './store'
 import { useEffect, useReducer } from 'react'
+import viteLogo from '/vite.svg'
+import reactLogo from './assets/react.svg'
 
 function App() {
-
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
-
-  useEffect (() => {
-    const unsubscribe = store.subscribe(() => {
-      forceUpdate()
-    })
-
-    return unsubscribe
-  }, [])
 
   return (
     <>
@@ -27,14 +17,9 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
+      <Counter counterId='first'/>
+      <Counter counterId='second' />
       <div className="card">
-        counter{store.getState().counter}
-        <button onClick={() => store.dispatch({type: 'increment'} satisfies IncrementAction)}>
-          increment
-        </button>
-        <button onClick={() => store.dispatch({type: 'decrement'} satisfies DecrementAction)}>
-          decriment
-        </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
@@ -42,6 +27,30 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+    </>
+  )
+}
+
+export function Counter({counterId}: { counterId: CounterId}) {
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
+  useEffect (() => {
+    const unsubscribe = store.subscribe(() => {
+      forceUpdate()
+    })
+
+    return unsubscribe
+  }, [])
+
+  return (
+    <>
+      counter{store.getState().counters[counterId]?.counter}
+      <button onClick={() => store.dispatch({type: 'increment', payload: {counterId}} satisfies IncrementAction)}>
+        increment
+      </button>
+      <button onClick={() => store.dispatch({type: 'decrement', payload: {counterId}} satisfies DecrementAction)}>
+        decriment
+      </button>
     </>
   )
 }
